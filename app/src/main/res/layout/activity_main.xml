@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#202E30"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="395dp"
+        android:layout_height="680dp"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="9dp"
+        tools:layout_editor_absoluteY="6dp">
+
+
+        <ListView
+            android:id="@+id/listview"
+            android:layout_width="match_parent"
+            android:layout_height="371dp"/>
+
+
+        <Button
+            android:id="@+id/list_abrir_config"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CONFIGURACIÓN DE LA TAREA SELECCIONADA" />
+
+        <Button
+            android:id="@+id/list_marcar_hecha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="MARCAR COMO HECHA" />
+
+        <Button
+            android:id="@+id/list_select_reverse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reverse Select" />
+
+
+        <Button
+            android:id="@+id/list_remove_selected_rows"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remove Selected Rows" />
+
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/id_edit_text"
+        android:layout_width="237dp"
+        android:layout_height="69dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="439dp"
+        android:layout_marginBottom="28dp"
+        android:ems="10"
+        android:hint="Escribir tarea"
+        android:inputType="textPersonName"
+        android:textColorHint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/id_boton_anadir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="644dp"
+        android:layout_marginBottom="28dp"
+        android:text="Añadir"
+        android:textColor="#CB54DF"
+        android:textStyle="bold"
+        app:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.417"
+        app:layout_constraintStart_toEndOf="@+id/id_edit_text"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
