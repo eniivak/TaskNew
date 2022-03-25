@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.tasknew">
 
+    <uses-sdk
+        android:maxSdkVersion="26"
+        android:minSdkVersion="23"
+        android:targetSdkVersion="23" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,7 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TaskNew">
         <activity
+            android:name=".TareaSettings"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Login"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
