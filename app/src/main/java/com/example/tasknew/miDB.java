@@ -289,7 +289,7 @@ public class miDB extends SQLiteOpenHelper {
                 mes= cursor.getInt(mes);
                 dia= cursor.getInt(dia);
 
-                tiene=dia + " / " + (mes+1) + " / " + year;
+                tiene=dia + " / " + (mes+2) + " / " + year;
                 Log.i("la fecha desde gestordb",tiene);
             }
 

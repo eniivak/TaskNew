@@ -36,12 +36,12 @@ public class Notificacion extends AppCompatActivity {
 
         //LA FECHA DE HOY
         Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(" dd / M / yyyy");
         String currentDate = simpleDateFormat.format(calendar.getTime());
 
 
         //LA FECHA DE LA TAREA
-        String fechaTarea=gestorDB.tieneFecha(tarea);
+        String fechaTarea=" "+gestorDB.tieneFecha(tarea);
 
         Log.i("1","la fecha de la tarea"+fechaTarea);
         Log.i("1","la fecha de hoy"+currentDate);
