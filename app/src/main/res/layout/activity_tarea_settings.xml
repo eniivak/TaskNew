@@ -47,7 +47,7 @@
         android:layout_marginEnd="182dp"
         android:textColor="@color/purple_200"
         android:textSize="25dp"
-        android:textStyle="bold"
+        android:textStyle="italic"
         app:layout_constraintBottom_toTopOf="@+id/id_descrip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.474"
@@ -141,7 +141,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.952"
         app:srcCompat="@android:drawable/ic_menu_delete" />
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
