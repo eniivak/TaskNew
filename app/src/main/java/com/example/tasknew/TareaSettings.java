@@ -1,8 +1,11 @@
 package com.example.tasknew;
 
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.graphics.ColorMatrix;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -29,7 +32,7 @@ public class TareaSettings extends AppCompatActivity {
         usuario=extras.getString("usuario");
         TareaModel tm= new TareaModel(tarea,usuario);
 
-        //Log.i("ha entrado" , " en la clase TareaSettings");
+        Log.i("ha entrado" , " en la clase TareaSettings");
         //Log.i("el nombre de la tarea", extras.getString("tarea"));
 
 
@@ -113,7 +116,20 @@ public class TareaSettings extends AppCompatActivity {
             }
         });
 
+
+        //GESTIONAR NOTIFICACIONES
+        Button notifi= (Button) findViewById(R.id.boton_notif);
+        notifi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //abrir clase Notificacion
+                Intent i= new Intent(TareaSettings.this, Notificacion.class);
+                i.putExtra("tarea",tarea);
+                startActivity(i);
+            }
+        });
     }
+
     private void showDatePickerDialog(miDB db) {
         ClaseDialogoFecha newFragment = ClaseDialogoFecha.newInstance(new DatePickerDialog.OnDateSetListener(){
             @Override
@@ -131,4 +147,22 @@ public class TareaSettings extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-}
+
+
+    /*//CREAR UN CANAL DE NOTIFICACIÓN
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Hoy tienes que hacer esta tarea"; //getString(R.string.channel_name)
+            String description = "La fecha de la tarea es esta"; //getString(R.string.channel_description)
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(NotificationChannel.DEFAULT_CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+*/}

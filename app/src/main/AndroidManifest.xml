@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TaskNew">
         <activity
+            android:name=".Notificacion"
+            android:exported="false" />
+        <activity
             android:name=".TareaSettings"
             android:exported="false" />
         <activity
