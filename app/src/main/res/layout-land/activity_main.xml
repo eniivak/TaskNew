@@ -11,18 +11,18 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="394dp"
-        android:layout_height="710dp"
+        android:layout_width="723dp"
+        android:layout_height="400dp"
         android:orientation="vertical"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="10dp"
-        tools:layout_editor_absoluteY="6dp">
+        tools:layout_editor_absoluteX="4dp"
+        tools:layout_editor_absoluteY="7dp">
 
 
         <ListView
             android:id="@+id/listview"
             android:layout_width="match_parent"
-            android:layout_height="371dp" />
+            android:layout_height="130dp" />
 
 
         <Button
@@ -36,6 +36,26 @@
             android:layout_width="match_parent"
             android:layout_height="59dp"
             android:text="MARCAR COMO HECHA" />
+
+        <Button
+            android:id="@+id/id_boton_anadir"
+            android:layout_width="156dp"
+            android:layout_height="51dp"
+            android:layout_marginStart="500dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="632dp"
+            android:layout_marginRight="632dp"
+            android:layout_marginBottom="70dp"
+            android:text="Añadir"
+            android:textColor="#CB54DF"
+            android:textStyle="bold"
+            app:backgroundTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/list_marcar_hecha"
+            app:layout_constraintVertical_bias="0.65999997"
+            tools:ignore="MissingConstraints" />
 
 
     </LinearLayout>
@@ -55,23 +75,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="1.0"
-        tools:ignore="MissingConstraints" />
-
-    <Button
-        android:id="@+id/id_boton_anadir"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="644dp"
-        android:layout_marginBottom="28dp"
-        android:text="Añadir"
-        android:textColor="#CB54DF"
-        android:textStyle="bold"
-        app:backgroundTint="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.417"
-        app:layout_constraintStart_toEndOf="@+id/id_edit_text"
-        app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
 
 
