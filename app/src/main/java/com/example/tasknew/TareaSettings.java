@@ -1,6 +1,7 @@
 package com.example.tasknew;
 
 import android.app.DatePickerDialog;
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class TareaSettings extends AppCompatActivity {
@@ -70,12 +72,19 @@ public class TareaSettings extends AppCompatActivity {
         //BORRAR TAREA
         ImageButton botonborrar= findViewById(R.id.imageButton);
         botonborrar.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 TareaModel tm= new TareaModel(extras.getString("tarea"), extras.getString("usuario"));
                 gestorDB.borrarTarea(tm);
                 Intent intent= new Intent(TareaSettings.this, MainActivity.class); //para que cuando borres la tarea directamente te lleve al panel de las tareas
                 startActivity(intent);
+
+                NotificationUtils mNotificationUtils = new NotificationUtils(TareaSettings.this);
+                Notification.Builder nb = mNotificationUtils.
+                        getAndroidChannelNotification("Has borrado la tarea ", tarea);
+
+                mNotificationUtils.getManager().notify(101, nb.build());
             }
         });
 
@@ -117,17 +126,7 @@ public class TareaSettings extends AppCompatActivity {
         });
 
 
-        //GESTIONAR NOTIFICACIONES
-        Button notifi= (Button) findViewById(R.id.boton_notif);
-        notifi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //abrir clase Notificacion
-                Intent i= new Intent(TareaSettings.this, Notificacion.class);
-                i.putExtra("tarea",tarea);
-                startActivity(i);
-            }
-        });
+
     }
 
     private void showDatePickerDialog(miDB db) {
@@ -149,20 +148,4 @@ public class TareaSettings extends AppCompatActivity {
 
 
 
-    /*//CREAR UN CANAL DE NOTIFICACIÓN
-    private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "Hoy tienes que hacer esta tarea"; //getString(R.string.channel_name)
-            String description = "La fecha de la tarea es esta"; //getString(R.string.channel_description)
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(NotificationChannel.DEFAULT_CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
-*/}
+}

@@ -28,27 +28,15 @@
         <Button
             android:id="@+id/list_abrir_config"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="CONFIGURACIÓN DE LA TAREA SELECCIONADA" />
+            android:layout_height="70dp"
+            android:text="CONFIGURACIÓN DE LA \nTAREA SELECCIONADA" />
 
         <Button
             android:id="@+id/list_marcar_hecha"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="59dp"
             android:text="MARCAR COMO HECHA" />
 
-        <Button
-            android:id="@+id/list_select_reverse"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Reverse Select" />
-
-
-        <Button
-            android:id="@+id/list_remove_selected_rows"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Remove Selected Rows" />
 
     </LinearLayout>
 

@@ -2,17 +2,20 @@ package com.example.tasknew;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class Login extends AppCompatActivity {
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -21,6 +24,8 @@ public class Login extends AppCompatActivity {
         Button botonlogin=  findViewById(R.id.button_login);
         EditText textousuario= findViewById(R.id.text_usuario);
         EditText textocontra= findViewById(R.id.text_contra);
+        //recorrer todos los usuarios y las tareas y coger las fechas, si alguno es hoy saltar notificacion? (esto para siguientes mejoras)
+        //sino pensar en otra notificacion, por ejemplo cuando borres una tarea o asi
         botonlogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

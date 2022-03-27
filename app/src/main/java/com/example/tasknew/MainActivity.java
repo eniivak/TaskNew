@@ -160,24 +160,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public List<TareaModel> addItemToList(View view, miDB gestorDB, String usuario, List<TareaModel> lista) {
-        Log.i("1", "ha entrado");
-        AlertDialog.Builder adb = new AlertDialog.Builder(MainActivity.this);
-        adb.setTitle("Añadir?");
-        adb.setMessage("Seguro que quieres añadir la tarea?");
-        adb.setNegativeButton("Cancelar", null);
-        adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                EditText editText = findViewById(R.id.id_edit_text);
-                TareaModel tm = new TareaModel(editText.getText().toString(), usuario);
-                gestorDB.añadirTarea(tm);
-                editText.setText(" ");
-                lista.add(tm);
-                tm.setChecked(false);
-                tm.setItemText(tm.getNombre());
-                listViewDataAdapter.notifyDataSetChanged(); //PARA QUE SE ACTUALICE LA LISTA Y NOS SALGA LA TAREA AÑADIDA EN EL LISTVIEW
-            }
-        });
-        adb.show();
+
+        EditText editText = findViewById(R.id.id_edit_text);
+        TareaModel tm = new TareaModel(editText.getText().toString(), usuario);
+        gestorDB.añadirTarea(tm);
+        editText.setText(" ");
+        lista.add(tm);
+        tm.setChecked(false);
+        tm.setItemText(tm.getNombre());
+        listViewDataAdapter.notifyDataSetChanged(); //PARA QUE SE ACTUALICE LA LISTA Y NOS SALGA LA TAREA AÑADIDA EN EL LISTVIEW
         return lista;
     }
 }
