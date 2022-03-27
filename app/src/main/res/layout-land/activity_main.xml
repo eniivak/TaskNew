@@ -22,14 +22,14 @@
         <ListView
             android:id="@+id/listview"
             android:layout_width="match_parent"
-            android:layout_height="130dp" />
+            android:layout_height="103dp" />
 
 
         <Button
             android:id="@+id/list_abrir_config"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:text="CONFIGURACIÓN DE LA \nTAREA SELECCIONADA" />
+            android:layout_height="48dp"
+            android:text="CONFIGURACIÓN DE LA TAREA SELECCIONADA" />
 
         <Button
             android:id="@+id/list_marcar_hecha"
@@ -42,7 +42,7 @@
             android:layout_width="156dp"
             android:layout_height="51dp"
             android:layout_marginStart="500dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="632dp"
             android:layout_marginRight="632dp"
             android:layout_marginBottom="70dp"

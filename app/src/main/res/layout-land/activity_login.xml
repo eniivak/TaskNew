@@ -11,15 +11,14 @@
 
     <TextView
         android:id="@+id/textview"
-        android:layout_width="315dp"
-        android:layout_height="83dp"
+        android:layout_width="344dp"
+        android:layout_height="37dp"
         android:text="INICIO DE SESIÓN"
         android:textColor="@color/white"
         android:textSize="34sp"
         app:layout_constraintBottom_toTopOf="@+id/text_usuario"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/registro_info"
@@ -62,8 +61,8 @@
         android:layout_alignRight="@+id/text_usuario"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginTop="236dp"
-        android:layout_marginEnd="324dp"
+        android:layout_marginTop="156dp"
+        android:layout_marginEnd="320dp"
         android:ems="10"
         android:hint="Contraseña"
         android:inputType="textPassword"
