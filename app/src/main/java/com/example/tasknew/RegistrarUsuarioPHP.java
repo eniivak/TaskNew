@@ -1,8 +1,6 @@
 package com.example.tasknew;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -19,59 +17,24 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class UsuariosPHP extends AsyncTask<Usuario,Void,String> {
+public class RegistrarUsuarioPHP extends AsyncTask<Usuario,Void,String> {
+    Context context;
+    Usuario usuario;
 
-AlertDialog dialog;
-Context context;
-Usuario usuario;
-Boolean registro=false;
-
-public UsuariosPHP(Context context,Usuario usu){
-    this.context=context;
-    this.usuario=usu;
-}
-    @Override
-    protected void onPreExecute() {
-        dialog= new AlertDialog.Builder(context).create();
-        dialog.setTitle("Login");
+    public RegistrarUsuarioPHP(Context context,Usuario usu){
+        this.context=context;
+        this.usuario=usu;
     }
-
     @Override
-    protected void onPostExecute(String s) {
-        if(s.equals(" login failed.. :(")){
-            s="El usuario no existe. \n¿Quiere registrarse con los datos introducidos?";
-            dialog.setButton("REGISTRARME", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //meter en la BD el usuario nuevo
-                    String link="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/registro.php";
-                    RegistrarUsuarioPHP registrarUsuarioPHP= new RegistrarUsuarioPHP(context,usuario);
-                    registrarUsuarioPHP.execute(usuario);
-                }
-            });
-        }
-        else if(s.equals("false")){
-            s= "Contraseña Incorrecta!";
-        }
-        else{
-            s="Login Correcto:)";
-        }
-        dialog.setMessage(s);
-        dialog.show();
-
-    }
-
-    @Override
-    protected String doInBackground(Usuario... strings) {
+    protected String doInBackground(Usuario... usuarios) {
         String result="";
-        this.usuario=strings[0];
-        String connstr= "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/login.php";
-        if(registro){
-            connstr="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/registro.php";
-        }
+        this.usuario=usuarios[0];
+        String connstr= "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/registro.php";
+
         result= gestionarUsuarios(connstr,usuario);
         return result;
     }
+
 
     private String gestionarUsuarios(String connstr, Usuario usuario){
         String result="";
@@ -104,10 +67,9 @@ public UsuariosPHP(Context context,Usuario usu){
             reader.close();
             ips.close();
             http.disconnect();
-            Log.i("el resultado",result);
+            Log.i("el resultado en registro",result);
             if(result.equals("true")){
                 dejarEntrar();
-
             }
             return result;
 
@@ -119,9 +81,8 @@ public UsuariosPHP(Context context,Usuario usu){
         return result;
     }
 
-
     private void dejarEntrar(){
-    Log.i("si","ha entrado en el dejarentrar");
+        Log.i("si","ha entrado en el dejarentrar");
         Intent i= new Intent(context, MainActivity.class);
 
         i.putExtra("user", usuario.getUsuario()    ); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity

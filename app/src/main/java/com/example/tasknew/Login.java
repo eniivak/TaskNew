@@ -33,7 +33,7 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
                 TextView tw= findViewById(R.id.registro_info);
                 Usuario usuario= new Usuario(textousuario.getText().toString(),textocontra.getText().toString());
-                UsuariosPHP usuariosphp= new UsuariosPHP(Login.this);
+                UsuariosPHP usuariosphp= new UsuariosPHP(Login.this,usuario);
                 usuariosphp.execute(usuario);
 
                 /*if(gestorDB.existeUsuario(usuario)){ //el usuario esta creado
@@ -96,7 +96,7 @@ public class Login extends AppCompatActivity {
         String usuario= textousuario.getText().toString();
         String contraseña= textocontra.getText().toString();
 
-        UsuariosPHP bg= new UsuariosPHP(this);
+        //UsuariosPHP bg= new UsuariosPHP(this,);
        // bg.execute(usuario,contraseña);
     }
     private boolean verificarCredenciales(miDB gestorDB, Usuario usuario){
