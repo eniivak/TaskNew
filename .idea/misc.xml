@@ -5,6 +5,8 @@
       <map>
         <entry key="..\:/Users/verho/AndroidStudioProjects/TaskNew/app/src/main/res/layout/activity_login.xml" value="0.15806159420289856" />
         <entry key="..\:/Users/verho/AndroidStudioProjects/TaskNew/app/src/main/res/layout/activity_main.xml" value="0.15806159420289856" />
+        <entry key="app/src/main/res/drawable/estrella.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.2" />
         <entry key="app/src/main/res/layout-land/activity_login.xml" value="0.30158730158730157" />
         <entry key="app/src/main/res/layout-land/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout-land/activity_tarea_settings.xml" value="0.30158730158730157" />
