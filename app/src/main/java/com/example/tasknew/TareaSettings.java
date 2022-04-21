@@ -8,6 +8,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -34,10 +35,15 @@ import androidx.annotation.AnyRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -46,10 +52,20 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.UUID;
 
 public class TareaSettings extends AppCompatActivity {
@@ -59,7 +75,10 @@ public class TareaSettings extends AppCompatActivity {
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
     private Uri filePath;
+    boolean conec = true;
 
+    String server_url = "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/";
+    AlertDialog.Builder builder;
     private static final String UPLOAD_URL= "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,23 +183,16 @@ public class TareaSettings extends AppCompatActivity {
         });
 
 
-
-
-
-        //Request for camera runtime permission
-        if(ContextCompat.checkSelfPermission(TareaSettings.this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(TareaSettings.this,new String[]{
-                    Manifest.permission.CAMERA},100);
-
-        }
-
-        //ABRIR LA CÁMARA PARA SACAR FOTOS
-        Button camarabot= findViewById(R.id.id_boton_camara);
-        camarabot.setOnClickListener(new View.OnClickListener() {
+        Button botonimagen= findViewById(R.id.id_boton_imagen);
+        botonimagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent,100);
+                Log.i("img","ha entrado en el onclick");
+                    //se ha hecho bien la conexión, por lo tanto podemos subir la imagen.
+                    Log.i("img","ha entrado en el if de verificacion");
+                    Intent intent= new Intent(TareaSettings.this, SubirImagen.class);
+                    startActivity(intent);
+
             }
         });
 
@@ -204,49 +216,6 @@ public class TareaSettings extends AppCompatActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-/*
-    private String getFileExtension(Uri uri){
-        ContentResolver cr= getContentResolver();
-        MimeTypeMap mime= MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(cr.getType(uri));
-    }
-    private void subirArchivo() throws FileNotFoundException {
-        ImageView img= findViewById(R.id.id_imagen);
-        int id= img.getId();
-        //img.setImageURI(Uri.fromFile(new File("/home/ena/AndroidStudioProjects/TaskNew/app/src/main/res/ena.jpg")));
-       //Uri uri= getUriToDrawable(TareaSettings.this,id); //"@android:drawable/btn_star_big_on" ;
-        Uri uri= Uri.fromFile(new File("/home/ena/AndroidStudioProjects/TaskNew/app/src/main/res/ena.jpg"));
-        if(uri!=null){
-            StorageReference fileRef= mStorageRef.child(System.currentTimeMillis() + "."+ getFileExtension(uri));
-            fileRef.putFile(uri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Toast.makeText(TareaSettings.this, "Upload successful", Toast.LENGTH_LONG).show();
-
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(TareaSettings.this, e.getMessage()+"ERRORES VARIOS"+uri.toString(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        }
-        else{
-            Toast.makeText(this,"No file selected",Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public static final Uri getUriToDrawable(@NonNull Context context, @AnyRes int drawableId) {
-        Uri imageUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                + "://" + context.getResources().getResourcePackageName(drawableId)
-                + '/' + context.getResources().getResourceTypeName(drawableId)
-                + '/' + context.getResources().getResourceEntryName(drawableId) );
-        return imageUri;
-    }
-
-*/
 
     //CONSEGUIR LA FOTO SACADA CON LA CÁMARA DEL TELÉFONO
     @Override
@@ -268,8 +237,13 @@ public class TareaSettings extends AppCompatActivity {
             botonimagen.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    subirImagen(bm);
-                    Log.d("algo","algo");
+                    Log.i("img","ha entrado en el onclick");
+                    if(verificarConexion()){
+                     //se ha hecho bien la conexión, por lo tanto podemos subir la imagen.
+                        Log.i("img","ha entrado en el if de verificacion");
+                        DBRemota dbr= new DBRemota();
+                        dbr.subirImagen(bm);
+                    }
                 }
             });
         }
@@ -297,21 +271,38 @@ public class TareaSettings extends AppCompatActivity {
         return path;
     }
 
-    private void subirImagen(Bitmap foto){
-        String name= "cualquiera"; //mas tarde definir mejor
-        String path= getPath(filePath);
-
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        foto.compress(Bitmap.CompressFormat.PNG, 100, stream);
-        byte[] fototransformada = stream.toByteArray();
-        String fotoen64 = Base64.encodeToString(fototransformada,Base64.DEFAULT);
 
 
-        Uri.Builder builder = new Uri.Builder()
-                .appendQueryParameter("identificador", UUID.randomUUID().toString())
-                .appendQueryParameter("imagen", fotoen64)
-                .appendQueryParameter("titulo", "algo");
-        String parametrosURL = builder.build().getEncodedQuery();
-        
+
+        public boolean verificarConexion(){
+        //Log.i("algo","ha entrado en dbremota");
+
+        server_url= server_url+ "pruebaConexion.php";
+        builder = new AlertDialog.Builder(TareaSettings.this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, server_url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+               conec=true;
+                Log.i("img","holiii");
+                Log.i("img1", String.valueOf(conec));
+            }
+        }               , new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(TareaSettings.this,"some error found .....",Toast.LENGTH_SHORT).show();
+                error.printStackTrace();
+                conec=false;
+
+            }
+        });
+
+        DBRemotaHelper.getInstance(TareaSettings.this).addTorequestque(stringRequest);
+            Log.i("img", String.valueOf(conec));
+        return conec;
     }
+
+
 }
+
+
+

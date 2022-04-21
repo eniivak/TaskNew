@@ -15,15 +15,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class Login extends AppCompatActivity {
 
+    EditText textousuario,textocontra;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         miDB gestorDB= new miDB(Login.this);
         Button botonlogin=  findViewById(R.id.button_login);
-        EditText textousuario= findViewById(R.id.text_usuario);
-        EditText textocontra= findViewById(R.id.text_contra);
+        textousuario= findViewById(R.id.text_usuario);
+        textocontra= findViewById(R.id.text_contra);
         //recorrer todos los usuarios y las tareas y coger las fechas, si alguno es hoy saltar notificacion? (esto para siguientes mejoras)
         //sino pensar en otra notificacion, por ejemplo cuando borres una tarea o asi
         botonlogin.setOnClickListener(new View.OnClickListener() {
@@ -34,6 +36,8 @@ public class Login extends AppCompatActivity {
                 if(gestorDB.existeUsuario(usuario)){ //el usuario esta creado
 
                     if(verificarCredenciales(gestorDB,usuario)){//verificar que la contraseña es correcta
+                        verificarenremoto();
+
                         Intent i= new Intent(Login.this, MainActivity.class);
 
                         i.putExtra("user", textousuario.getText().toString()    ); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
@@ -84,6 +88,13 @@ public class Login extends AppCompatActivity {
         });
 
 
+    }
+    private void verificarenremoto(){
+        String usuario= textousuario.getText().toString();
+        String contraseña= textocontra.getText().toString();
+
+        Background bg= new Background(this);
+        bg.execute(usuario,contraseña);
     }
     private boolean verificarCredenciales(miDB gestorDB, Usuario usuario){
         if(gestorDB.contrabien(usuario)){
