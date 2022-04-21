@@ -2,6 +2,7 @@ package com.example.tasknew;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -17,33 +18,38 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class Background extends AsyncTask<String,Void,String> {
+public class UsuariosPHP extends AsyncTask<Usuario,Void,String> {
 
 AlertDialog dialog;
 Context context;
+Usuario usuario;
 
-public Background(Context context){
+public UsuariosPHP(Context context){
     this.context=context;
 
 }
     @Override
     protected void onPreExecute() {
         dialog= new AlertDialog.Builder(context).create();
-        dialog.setTitle("Login Status");
+        dialog.setTitle("Login");
     }
 
     @Override
     protected void onPostExecute(String s) {
+        if(s.equals("false")){
+            s="El usuario o la contraseña son incorrectas";
+        }
         dialog.setMessage(s);
         dialog.show();
 
     }
 
     @Override
-    protected String doInBackground(String... strings) {
+    protected String doInBackground(Usuario... strings) {
         String result="";
-        String user= strings[0];
-        String pass = strings[1];
+        this.usuario=strings[0];
+        String user= strings[0].getUsuario();
+        String pass = strings[0].getContraseña();
 
         String connstr= "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/login.php";
         try {
@@ -74,6 +80,10 @@ public Background(Context context){
             ips.close();
             http.disconnect();
             Log.i("el resultado",result);
+            if(result.equals("true")){
+                dejarEntrar();
+
+            }
             return result;
 
         } catch (MalformedURLException e) {
@@ -84,5 +94,13 @@ public Background(Context context){
 
 
         return result;
+    }
+
+    private void dejarEntrar(){
+    Log.i("si","ha entrado en el dejarentrar");
+        Intent i= new Intent(context, MainActivity.class);
+
+        i.putExtra("user", usuario.getUsuario()    ); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
+        context.startActivity(i);
     }
 }

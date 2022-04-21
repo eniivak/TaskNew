@@ -33,7 +33,10 @@ public class Login extends AppCompatActivity {
             public void onClick(View view) {
                 TextView tw= findViewById(R.id.registro_info);
                 Usuario usuario= new Usuario(textousuario.getText().toString(),textocontra.getText().toString());
-                if(gestorDB.existeUsuario(usuario)){ //el usuario esta creado
+                UsuariosPHP usuariosphp= new UsuariosPHP(Login.this);
+                usuariosphp.execute(usuario);
+
+                /*if(gestorDB.existeUsuario(usuario)){ //el usuario esta creado
 
                     if(verificarCredenciales(gestorDB,usuario)){//verificar que la contraseña es correcta
                         verificarenremoto();
@@ -80,7 +83,7 @@ public class Login extends AppCompatActivity {
                             gestorDB.añadirUsuario(usuario); //hacer otro xml?
                         }});
                     adb.show();
-                }
+                }*/
 
 
 
@@ -93,8 +96,8 @@ public class Login extends AppCompatActivity {
         String usuario= textousuario.getText().toString();
         String contraseña= textocontra.getText().toString();
 
-        Background bg= new Background(this);
-        bg.execute(usuario,contraseña);
+        UsuariosPHP bg= new UsuariosPHP(this);
+       // bg.execute(usuario,contraseña);
     }
     private boolean verificarCredenciales(miDB gestorDB, Usuario usuario){
         if(gestorDB.contrabien(usuario)){
