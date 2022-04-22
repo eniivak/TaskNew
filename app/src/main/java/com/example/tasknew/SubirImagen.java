@@ -34,12 +34,21 @@ import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.cli
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,10 +57,10 @@ public class SubirImagen extends Activity {
 
     Button camarabot, btnup;
     String picturePath;
-    String ba1;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView img;
     String tarea;
+    static String result = "";
 
     public static String URL = "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/subirimagen.php";
     @Override
@@ -60,6 +69,18 @@ public class SubirImagen extends Activity {
         setContentView(R.layout.subir_imagenes);
         Bundle extras= getIntent().getExtras();
         tarea = extras.getString("tarea");
+
+        //COMPROBAR SI YA HAY UNA FOTO
+       /* ConseguirImagenPHP conseguirImagenPHP= new ConseguirImagenPHP();
+        AsyncTask<String, Void, String> l = conseguirImagenPHP.execute(tarea);
+
+        Log.i("la foto ele", String.valueOf(l));
+        //img.setImageBitmap();*/
+
+        conseguirImagen();
+        Log.i("la foto ele", "el resultado");
+        Log.i("la foto ele", result);
+
 
         //Request for camera runtime permission
         if(ContextCompat.checkSelfPermission(SubirImagen.this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
@@ -131,5 +152,63 @@ public class SubirImagen extends Activity {
         }
 
 
+    }
+
+    private void conseguirImagen(){
+        class ConseguirImagenPHP extends AsyncTask<String,Void,String> {
+            @Override
+            protected String doInBackground(String... strings) {
+                result=conseguirImagen(strings[0]);
+                Log.i("desde conseguirimafenphp:",result);
+
+                return result;
+            }
+
+
+            private String conseguirImagen(String titulo){
+                String link="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/conseguirimagen.php";
+                try {
+                    java.net.URL url= new URL(link);
+                    HttpURLConnection http= (HttpURLConnection) url.openConnection();
+                    http.setRequestMethod("POST");
+                    http.setDoInput(true);;
+                    http.setDoOutput(true);
+
+                    Log.i("el titulo",titulo);
+                    OutputStream ops= http.getOutputStream();
+                    BufferedWriter writer= new BufferedWriter( new OutputStreamWriter(ops,"UTF-8"));
+                    String data= URLEncoder.encode("titulo","UTF-8")+"="+URLEncoder.encode(titulo,"UTF-8");
+                    writer.write(data);
+                    writer.flush();
+                    writer.close();
+
+                    ops.close();
+
+                    InputStream ips= http.getInputStream();
+                    BufferedReader reader= new BufferedReader(new InputStreamReader(ips,"ISO-8859-1"));
+                    String line="";
+                    while((line=reader.readLine())!=null){
+                        result+=line;
+                    }
+
+                    reader.close();
+                    ips.close();
+                    http.disconnect();
+                    Log.i("el resultado en conseguirimagenes del servidor",result);
+                    if(result.equals("true")){
+                        Log.i("php","se supone que se ha subido");
+                    }
+                    return result;
+
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return result;
+            }
+        }
+        ConseguirImagenPHP conseguirImagenPHP= new ConseguirImagenPHP();
+        conseguirImagenPHP.execute(tarea);
     }
 }
