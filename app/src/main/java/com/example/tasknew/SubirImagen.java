@@ -9,10 +9,13 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -32,22 +35,31 @@ import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class SubirImagen extends Activity {
 
     Button camarabot, btnup;
-    private Uri fileUri;
     String picturePath;
-    Uri selectedImage;
-    Bitmap photo;
     String ba1;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
+    ImageView img;
+    String tarea;
+
     public static String URL = "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/subirimagen.php";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.subir_imagenes);
-
+        Bundle extras= getIntent().getExtras();
+        tarea = extras.getString("tarea");
 
         //Request for camera runtime permission
         if(ContextCompat.checkSelfPermission(SubirImagen.this, Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
@@ -62,7 +74,9 @@ public class SubirImagen extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent= new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(intent,100);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                }
             }
         });
 
@@ -70,106 +84,41 @@ public class SubirImagen extends Activity {
         btnup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                upload();
+                // upload();
+                String titulo= tarea;
+                String imagen= picturePath;
+                SubirImagenesPHP subirImagenesPHP= new SubirImagenesPHP(SubirImagen.this);
+                subirImagenesPHP.execute(titulo,imagen);
             }
         });
     }
 
-    private void upload() {
-        // Image location URL
-        Log.e("path", "----------------" + picturePath);
-
-        // Image
-        Bitmap bm = BitmapFactory.decodeFile(picturePath);
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-        byte[] ba = bao.toByteArray();
-        //ba1 = Base64.encodeBytes(ba);
-
-        Log.e("base64", "-----" + ba1);
-
-        // Upload image to server
-        new uploadToServer().execute();
-
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 100 && resultCode == RESULT_OK) {
 
-            Log.i("img", String.valueOf(data.getExtras().get("data")));
-            photo = (Bitmap) data.getExtras().get("data");
+       img = findViewById(R.id.Imageprev);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            img.setImageBitmap(imageBitmap);
 
-            ImageView img= findViewById(R.id.Imageprev);
-            img.setImageBitmap(photo);
-            selectedImage = data.getData();
-            // Cursor to get image uri to display
+            String imageFileName =tarea;
+            imageFileName.concat(imageFileName);
+            File f = (getExternalFilesDir(Environment.DIRECTORY_PICTURES));
 
-          /*  String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            cursor.moveToFirst();*/
-
-            //int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-
-            picturePath = selectedImage.toString();
-            //cursor.close();
-        }
-    }
-
-    private String getPath(Uri uri){
-        Cursor cursor= getContentResolver().query(uri,null,null,null,null);
-        cursor.moveToFirst();
-        String document_id= cursor.getString(0);
-
-        document_id= document_id.substring(document_id.lastIndexOf(":")+1);
-        cursor.close();
-
-        cursor=getContentResolver().query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                null,
-                MediaStore.Images.Media._ID+" = ? ",
-                new String[]{document_id},
-                null
-        );
-        cursor.moveToFirst();
-        @SuppressLint("Range") String path= cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-        cursor.close();
-        return path;
-    }
-    public class uploadToServer extends AsyncTask<Void, Void, String> {
-
-        private ProgressDialog pd = new ProgressDialog(SubirImagen.this);
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pd.setMessage("Wait image uploading!");
-            pd.show();
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            ArrayList<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("base64", ba1));
-            nameValuePairs.add(new BasicNameValuePair("ImageName", System.currentTimeMillis() + ".jpg"));
             try {
-                HttpClient httpclient = new DefaultHttpClient();
-                HttpPost httppost = new HttpPost(URL);
-                httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-                HttpResponse response = httpclient.execute(httppost);
-                String st = EntityUtils.toString(response.getEntity());
-                Log.v("log_tag", "In the try Loop" + st);
-
-            } catch (Exception e) {
-                Log.v("log_tag", "Error in http connection " + e.toString());
+                File image = File.createTempFile(
+                        "img",  /* prefix */
+                        ".jpg",         /* suffix */
+                        f      /* directory */
+                );
+                picturePath = image.getName();
+                Log.i("imagen nueva",picturePath);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            return "Success";
 
         }
 
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            pd.hide();
-            pd.dismiss();
+
         }
-    }
 }

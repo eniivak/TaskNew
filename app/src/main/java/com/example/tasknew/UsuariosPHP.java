@@ -66,9 +66,6 @@ public UsuariosPHP(Context context,Usuario usu){
         String result="";
         this.usuario=strings[0];
         String connstr= "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/login.php";
-        if(registro){
-            connstr="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/registro.php";
-        }
         result= gestionarUsuarios(connstr,usuario);
         return result;
     }

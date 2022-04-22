@@ -137,6 +137,7 @@ public class TareaSettings extends AppCompatActivity {
                 Intent intent= new Intent(TareaSettings.this, MainActivity.class); //para que cuando borres la tarea directamente te lleve al panel de las tareas
                 startActivity(intent);
 
+
                 NotificationUtils mNotificationUtils = new NotificationUtils(TareaSettings.this);
                 Notification.Builder nb = mNotificationUtils.
                         getAndroidChannelNotification("Has borrado la tarea ", tarea);
@@ -183,6 +184,7 @@ public class TareaSettings extends AppCompatActivity {
         });
 
 
+        //SUBIR LA FOTO AL SERVIDOR
         Button botonimagen= findViewById(R.id.id_boton_imagen);
         botonimagen.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,7 +192,9 @@ public class TareaSettings extends AppCompatActivity {
                 Log.i("img","ha entrado en el onclick");
                     //se ha hecho bien la conexión, por lo tanto podemos subir la imagen.
                     Log.i("img","ha entrado en el if de verificacion");
+
                     Intent intent= new Intent(TareaSettings.this, SubirImagen.class);
+                intent.putExtra("tarea",tarea);
                     startActivity(intent);
 
             }

@@ -35,77 +35,10 @@ public class Login extends AppCompatActivity {
                 Usuario usuario= new Usuario(textousuario.getText().toString(),textocontra.getText().toString());
                 UsuariosPHP usuariosphp= new UsuariosPHP(Login.this,usuario);
                 usuariosphp.execute(usuario);
-
-                /*if(gestorDB.existeUsuario(usuario)){ //el usuario esta creado
-
-                    if(verificarCredenciales(gestorDB,usuario)){//verificar que la contraseña es correcta
-                        verificarenremoto();
-
-                        Intent i= new Intent(Login.this, MainActivity.class);
-
-                        i.putExtra("user", textousuario.getText().toString()    ); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
-                        startActivity(i);
-                        tw.setText("",TextView.BufferType.EDITABLE);
-                    }
-
-                    else{ //si la contraseña es incorrecta
-                        //preguntar que meta otra vez la contraseña
-                        textocontra.setText("");
-                        AlertDialog.Builder adb=new AlertDialog.Builder(Login.this);
-                        adb.setTitle("CONTRASEÑA INCORRECTA");
-                        adb.setMessage("Por favor, vuelve a introducir la contraseña");
-                        adb.setNegativeButton("Cancelar", null);
-                        adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                //comprobar si esta bien la contraseña
-
-                                usuario.setContraseña(textocontra.getText().toString());
-                                if(verificarCredenciales(gestorDB,usuario)){
-                                    Intent i= new Intent(Login.this, MainActivity.class);
-
-                                    i.putExtra("user", textousuario.getText().toString()    ); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
-                                    startActivity(i);
-                                }
-                            }});
-                        adb.show();
-                    }
-
-                }
-                else{ //preguntar si quiere registrarse con esos datos
-                    AlertDialog.Builder adb=new AlertDialog.Builder(Login.this);
-                    adb.setTitle("Registro");
-                    adb.setMessage("Quieres registrarte con el usuario y contraseña que has introducido? ");
-                    adb.setNegativeButton("Cancelar", null);
-                    adb.setPositiveButton("Ok", new AlertDialog.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            tw.setText("Pulsa el botón LOGIN nuevamente para ingresar",TextView.BufferType.EDITABLE);
-                            gestorDB.añadirUsuario(usuario); //hacer otro xml?
-                        }});
-                    adb.show();
-                }*/
-
-
-
             }
         });
 
 
-    }
-    private void verificarenremoto(){
-        String usuario= textousuario.getText().toString();
-        String contraseña= textocontra.getText().toString();
-
-        //UsuariosPHP bg= new UsuariosPHP(this,);
-       // bg.execute(usuario,contraseña);
-    }
-    private boolean verificarCredenciales(miDB gestorDB, Usuario usuario){
-        if(gestorDB.contrabien(usuario)){
-            return true;
-        }
-        else{
-            return false;
-        }
     }
 
 }
