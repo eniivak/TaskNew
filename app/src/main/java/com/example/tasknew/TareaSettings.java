@@ -74,12 +74,6 @@ public class TareaSettings extends AppCompatActivity {
     String usuario;
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
-    private Uri filePath;
-    boolean conec = true;
-
-    String server_url = "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/";
-    AlertDialog.Builder builder;
-    private static final String UPLOAD_URL= "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //INICIALIZAR

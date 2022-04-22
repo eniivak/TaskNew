@@ -80,16 +80,23 @@ public class SubirImagen extends Activity {
             }
         });
 
+        //SUBIR FOTOS AL SERVIDOR
         btnup = (Button) findViewById(R.id.up);
         btnup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // upload();
                 String titulo= tarea;
                 String imagen= picturePath;
                 SubirImagenesPHP subirImagenesPHP= new SubirImagenesPHP(SubirImagen.this);
                 subirImagenesPHP.execute(titulo,imagen);
 
+            }
+        });
+
+        Button volver= findViewById(R.id.boton_volversettings);
+        volver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Intent intent= new Intent(SubirImagen.this, TareaSettings.class);
                 intent.putExtra("tarea",tarea);
                 startActivity(intent);
@@ -124,5 +131,5 @@ public class SubirImagen extends Activity {
         }
 
 
-        }
+    }
 }
