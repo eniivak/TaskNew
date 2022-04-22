@@ -89,6 +89,10 @@ public class SubirImagen extends Activity {
                 String imagen= picturePath;
                 SubirImagenesPHP subirImagenesPHP= new SubirImagenesPHP(SubirImagen.this);
                 subirImagenesPHP.execute(titulo,imagen);
+
+                Intent intent= new Intent(SubirImagen.this, TareaSettings.class);
+                intent.putExtra("tarea",tarea);
+                startActivity(intent);
             }
         });
     }

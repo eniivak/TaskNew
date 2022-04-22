@@ -2,6 +2,7 @@ package com.example.tasknew;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -26,6 +27,7 @@ public class SubirImagenesPHP extends AsyncTask<String,Void,String> {
     public SubirImagenesPHP(Context ctx){
         this.context=ctx;
         this.pd= new ProgressDialog(ctx);
+
     }
 
     protected void onPreExecute() {
@@ -89,7 +91,6 @@ public class SubirImagenesPHP extends AsyncTask<String,Void,String> {
             Log.i("el resultado en subirimagenes al servidor",result);
             if(result.equals("true")){
                 Log.i("php","se supone que se ha subido");
-                //dejarEntrar();
             }
             return result;
 
@@ -102,3 +103,4 @@ public class SubirImagenesPHP extends AsyncTask<String,Void,String> {
     }
 
 }
+
