@@ -168,6 +168,7 @@ public class SubirImagen extends Activity {
                 conseguirImagen(strings[0]);
                 try {
                     mostrarImagen();
+
                 } catch (IOException | JSONException e) {
                     e.printStackTrace();
                 }
@@ -179,7 +180,10 @@ public class SubirImagen extends Activity {
                 super.onPostExecute(s);
                 result=s;
                 Log.i("desde conseguirimafenphp",result);
-                img.setImageBitmap(imageBitmap);
+                if(!result.equals("false")){
+                    img.setImageBitmap(imageBitmap);
+                }
+
             }
             private String conseguirImagen(String titulo){
                 String link="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/selectImage.php";
@@ -226,22 +230,22 @@ public class SubirImagen extends Activity {
             private void mostrarImagen() throws IOException, JSONException {
 
                 JSONArray jsonArray = new JSONArray(result);
-                String resultado="";
                 for(int i = 0; i < jsonArray.length(); i++)
                 {
                     Log.i("JSONImagenes", "doWork: "+jsonArray.getJSONObject(i));
-                    resultado = jsonArray.getJSONObject(i).getString("resultado");
-                    Log.i("JSONImagenes", "doWork: "+resultado);
+                    result = jsonArray.getJSONObject(i).getString("resultado");
+                    Log.i("JSONImagenes", "doWork: "+result);
                 }
-                //byte[] b = Base64.decode(encodedimg,Base64.URL_SAFE);
-                byte[] bytes= Base64.decode(resultado,Base64.URL_SAFE);
-                imageBitmap= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                Log.i("bitmap", String.valueOf(imageBitmap));
-                if(imageBitmap==null){
-                    Uri newUri = Uri.fromFile(new File(resultado));
-                    imageBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(newUri));
+                if (!result.equals("false")){
+                    byte[] bytes= Base64.decode(result,Base64.URL_SAFE);
+                    imageBitmap= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                    Log.i("bitmap", String.valueOf(imageBitmap));
+                    if(imageBitmap==null){
+                        Uri newUri = Uri.fromFile(new File(result));
+                        imageBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(newUri));
+                    }
+                    Log.i("bitmap", String.valueOf(imageBitmap));
                 }
-                Log.i("bitmap", String.valueOf(imageBitmap));
 
             }
         }
