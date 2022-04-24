@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
         Log.i("ha entrado", " en la clase MainActivity");
         miDB gestorDB = new miDB(MainActivity.this);
         Bundle extras = getIntent().getExtras();
-        Log.i("ha pillado los extras", extras.getString("user"));
         listViewWithCheckbox = (ListView) findViewById(R.id.listview);
 
         // Initiate listview data.
+        Log.i("desde la clase main el nombre del usuario",extras.getString("usuario"));
 
-        initItemList = this.display(gestorDB, extras.getString("user"));
+        initItemList = this.display(gestorDB, extras.getString("usuario"));
         Log.i("ha hecho bien el display", initItemList.toString());
         // Create a custom list view adapter with checkbox control.
         listViewDataAdapter = new AdapterListView(getApplicationContext(), initItemList);

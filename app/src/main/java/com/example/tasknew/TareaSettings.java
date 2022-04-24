@@ -129,6 +129,7 @@ public class TareaSettings extends AppCompatActivity {
                 TareaModel tm= new TareaModel(extras.getString("tarea"), extras.getString("usuario"));
                 gestorDB.borrarTarea(tm);
                 Intent intent= new Intent(TareaSettings.this, MainActivity.class); //para que cuando borres la tarea directamente te lleve al panel de las tareas
+                intent.putExtra("usuario",usuario);
                 startActivity(intent);
 
 
@@ -161,7 +162,8 @@ public class TareaSettings extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent= new Intent(TareaSettings.this, MainActivity.class);
-                intent.putExtra("user",extras.getString("usuario"));
+                intent.putExtra("usuario",usuario);
+                intent.putExtra("usuario",usuario);
                 startActivity(intent);
 
             }
@@ -184,8 +186,6 @@ public class TareaSettings extends AppCompatActivity {
         botonimagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //SubirImagen s= new SubirImagen();
-                //s.conseguirImagen();
                 Intent intent= new Intent(TareaSettings.this, SubirImagen.class);
                 intent.putExtra("tarea",tarea);
                 startActivity(intent);

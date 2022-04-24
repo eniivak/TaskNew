@@ -121,7 +121,7 @@ public UsuariosPHP(Context context,Usuario usu){
     Log.i("si","ha entrado en el dejarentrar");
         Intent i= new Intent(context, MainActivity.class);
 
-        i.putExtra("user", usuario.getUsuario()    ); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
+        i.putExtra("usuario", usuario.getUsuario()    ); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
         context.startActivity(i);
     }
 }

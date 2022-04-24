@@ -80,10 +80,6 @@ public class SubirImagen extends Activity {
 
         //COMPROBAR SI YA HAY UNA FOTO
         conseguirImagendelServidor();
-        //img.setImageBitmap(imageBitmap);
-        //getImage();
-
-        //Log.i("la foto ele", result);
 
 
         //Request for camera runtime permission
@@ -119,6 +115,7 @@ public class SubirImagen extends Activity {
             }
         });
 
+        //VOLVER A LOS SETTINGS
         Button volver= findViewById(R.id.boton_volversettings);
         volver.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -138,8 +135,8 @@ public class SubirImagen extends Activity {
         return encodedImage;
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
@@ -161,57 +158,9 @@ public class SubirImagen extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
-
-
     }
 
-   /* private void getImage() {
-        class GetImage extends AsyncTask<String,Void,Bitmap>{
-            ProgressDialog loading;
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                loading = ProgressDialog.show(SubirImagen.this, "Uploading...", null,true,true);
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap b) {
-                super.onPostExecute(b);
-                loading.dismiss();
-                if(b!=null){
-                    img.setImageBitmap(b);
-                }
-            }
-
-            @Override
-            protected Bitmap doInBackground(String... params) {
-                String add = "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/selectImage.php";
-                URL url = null;
-                Bitmap image = null;
-                try {
-                    url = new URL(add);
-                    Log.i("url solo",url.toString());
-                    Log.i("el url", String.valueOf(url.openConnection().getInputStream()));
-
-                    //Bitmap btm= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-                    image=(Bitmap) BitmapFactory.decodeStream(url.openStream());
-                    Log.i("imagen en el background", String.valueOf(image));
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return image;
-            }
-        }
-
-        GetImage gi = new GetImage();
-        gi.execute();
-    }
-*/
     private void conseguirImagendelServidor(){
         class ConseguirImagenPHP extends AsyncTask<String,Void,String> {
             @Override
@@ -275,13 +224,6 @@ public class SubirImagen extends Activity {
                 return result;
             }
             private void mostrarImagen() throws IOException, JSONException {
-               /* String[] split = result.split(".j");
-                result=split[0];
-                URL url = null;
-                Bitmap bitmap = null;
-                url = new URL(result);
-                bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                img.setImageBitmap(bitmap);*/
 
                 JSONArray jsonArray = new JSONArray(result);
                 String resultado="";
