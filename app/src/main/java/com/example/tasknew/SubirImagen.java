@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.base.Utf8;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.NameValuePair;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.HttpClient;
@@ -34,9 +35,14 @@ import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.cli
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -53,6 +59,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.net.ssl.HttpsURLConnection;
+
 public class SubirImagen extends Activity {
 
     Button camarabot, btnup;
@@ -60,26 +68,22 @@ public class SubirImagen extends Activity {
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView img;
     String tarea;
-    static String result = "";
-
-    public static String URL = "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/subirimagen.php";
+    private String result="" ;
+    Bitmap imageBitmap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.subir_imagenes);
         Bundle extras= getIntent().getExtras();
         tarea = extras.getString("tarea");
+        img = findViewById(R.id.Imageprev);
 
         //COMPROBAR SI YA HAY UNA FOTO
-       /* ConseguirImagenPHP conseguirImagenPHP= new ConseguirImagenPHP();
-        AsyncTask<String, Void, String> l = conseguirImagenPHP.execute(tarea);
+        conseguirImagendelServidor();
+        //img.setImageBitmap(imageBitmap);
+        //getImage();
 
-        Log.i("la foto ele", String.valueOf(l));
-        //img.setImageBitmap();*/
-
-        conseguirImagen();
-        Log.i("la foto ele", "el resultado");
-        Log.i("la foto ele", result);
+        //Log.i("la foto ele", result);
 
 
         //Request for camera runtime permission
@@ -109,7 +113,8 @@ public class SubirImagen extends Activity {
                 String titulo= tarea;
                 String imagen= picturePath;
                 SubirImagenesPHP subirImagenesPHP= new SubirImagenesPHP(SubirImagen.this);
-                subirImagenesPHP.execute(titulo,imagen);
+                Log.i("encoded",encode(imageBitmap));
+                subirImagenesPHP.execute(titulo,encode(imageBitmap));
 
             }
         });
@@ -124,13 +129,21 @@ public class SubirImagen extends Activity {
             }
         });
     }
+    private String encode(Bitmap img){
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.JPEG, 50, baos); //bm is the bitmap object
+        byte[] b = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(b , Base64.URL_SAFE);
+        return encodedImage;
+    }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-       img = findViewById(R.id.Imageprev);
+
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            imageBitmap = (Bitmap) extras.get("data");
             img.setImageBitmap(imageBitmap);
 
             String imageFileName =tarea;
@@ -154,19 +167,73 @@ public class SubirImagen extends Activity {
 
     }
 
-    private void conseguirImagen(){
+   /* private void getImage() {
+        class GetImage extends AsyncTask<String,Void,Bitmap>{
+            ProgressDialog loading;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                loading = ProgressDialog.show(SubirImagen.this, "Uploading...", null,true,true);
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap b) {
+                super.onPostExecute(b);
+                loading.dismiss();
+                if(b!=null){
+                    img.setImageBitmap(b);
+                }
+            }
+
+            @Override
+            protected Bitmap doInBackground(String... params) {
+                String add = "http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/selectImage.php";
+                URL url = null;
+                Bitmap image = null;
+                try {
+                    url = new URL(add);
+                    Log.i("url solo",url.toString());
+                    Log.i("el url", String.valueOf(url.openConnection().getInputStream()));
+
+                    //Bitmap btm= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                    image=(Bitmap) BitmapFactory.decodeStream(url.openStream());
+                    Log.i("imagen en el background", String.valueOf(image));
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return image;
+            }
+        }
+
+        GetImage gi = new GetImage();
+        gi.execute();
+    }
+*/
+    private void conseguirImagendelServidor(){
         class ConseguirImagenPHP extends AsyncTask<String,Void,String> {
             @Override
             protected String doInBackground(String... strings) {
-                result=conseguirImagen(strings[0]);
-                Log.i("desde conseguirimafenphp:",result);
-
+                conseguirImagen(strings[0]);
+                try {
+                    mostrarImagen();
+                } catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                }
                 return result;
             }
 
-
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                result=s;
+                Log.i("desde conseguirimafenphp",result);
+                img.setImageBitmap(imageBitmap);
+            }
             private String conseguirImagen(String titulo){
-                String link="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/conseguirimagen.php";
+                String link="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/selectImage.php";
                 try {
                     java.net.URL url= new URL(link);
                     HttpURLConnection http= (HttpURLConnection) url.openConnection();
@@ -207,8 +274,38 @@ public class SubirImagen extends Activity {
                 }
                 return result;
             }
+            private void mostrarImagen() throws IOException, JSONException {
+               /* String[] split = result.split(".j");
+                result=split[0];
+                URL url = null;
+                Bitmap bitmap = null;
+                url = new URL(result);
+                bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+                img.setImageBitmap(bitmap);*/
+
+                JSONArray jsonArray = new JSONArray(result);
+                String resultado="";
+                for(int i = 0; i < jsonArray.length(); i++)
+                {
+                    Log.i("JSONImagenes", "doWork: "+jsonArray.getJSONObject(i));
+                    resultado = jsonArray.getJSONObject(i).getString("resultado");
+                    Log.i("JSONImagenes", "doWork: "+resultado);
+                }
+                //byte[] b = Base64.decode(encodedimg,Base64.URL_SAFE);
+                byte[] bytes= Base64.decode(resultado,Base64.URL_SAFE);
+                imageBitmap= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
+                Log.i("bitmap", String.valueOf(imageBitmap));
+                if(imageBitmap==null){
+                    Uri newUri = Uri.fromFile(new File(resultado));
+                    imageBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(newUri));
+                }
+                Log.i("bitmap", String.valueOf(imageBitmap));
+
+            }
         }
         ConseguirImagenPHP conseguirImagenPHP= new ConseguirImagenPHP();
         conseguirImagenPHP.execute(tarea);
     }
+
+
 }

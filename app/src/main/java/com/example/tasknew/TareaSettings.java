@@ -161,6 +161,7 @@ public class TareaSettings extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent= new Intent(TareaSettings.this, MainActivity.class);
+                intent.putExtra("user",extras.getString("usuario"));
                 startActivity(intent);
 
             }
@@ -178,18 +179,16 @@ public class TareaSettings extends AppCompatActivity {
         });
 
 
-        //SUBIR LA FOTO AL SERVIDOR
+        //GESTIONAR IMAGENES DE LA TAREA
         Button botonimagen= findViewById(R.id.id_boton_imagen);
         botonimagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("img","ha entrado en el onclick");
-                    //se ha hecho bien la conexión, por lo tanto podemos subir la imagen.
-                    Log.i("img","ha entrado en el if de verificacion");
-
-                    Intent intent= new Intent(TareaSettings.this, SubirImagen.class);
+                //SubirImagen s= new SubirImagen();
+                //s.conseguirImagen();
+                Intent intent= new Intent(TareaSettings.this, SubirImagen.class);
                 intent.putExtra("tarea",tarea);
-                    startActivity(intent);
+                startActivity(intent);
 
             }
         });
