@@ -186,7 +186,7 @@ public class SubirImagen extends Activity {
 
             }
             private String conseguirImagen(String titulo){
-                String link="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/selectImage.php";
+                String link="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/conseguirimagen.php";
                 try {
                     java.net.URL url= new URL(link);
                     HttpURLConnection http= (HttpURLConnection) url.openConnection();
@@ -228,14 +228,6 @@ public class SubirImagen extends Activity {
                 return result;
             }
             private void mostrarImagen() throws IOException, JSONException {
-
-                JSONArray jsonArray = new JSONArray(result);
-                for(int i = 0; i < jsonArray.length(); i++)
-                {
-                    Log.i("JSONImagenes", "doWork: "+jsonArray.getJSONObject(i));
-                    result = jsonArray.getJSONObject(i).getString("resultado");
-                    Log.i("JSONImagenes", "doWork: "+result);
-                }
                 if (!result.equals("false")){
                     byte[] bytes= Base64.decode(result,Base64.URL_SAFE);
                     imageBitmap= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
