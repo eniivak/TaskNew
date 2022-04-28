@@ -44,7 +44,6 @@ public UsuariosPHP(Context context,Usuario usu){
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //meter en la BD el usuario nuevo
-                    String link="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/registro.php";
                     RegistrarUsuarioPHP registrarUsuarioPHP= new RegistrarUsuarioPHP(context,usuario);
                     registrarUsuarioPHP.execute(usuario);
                 }
@@ -52,6 +51,12 @@ public UsuariosPHP(Context context,Usuario usu){
         }
         else if(s.equals("false")){
             s= "Contraseña Incorrecta!";
+            dialog.setButton("Intentar de nuevo", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+
+                }
+            });
         }
         else{
             s="Login Correcto:)";
