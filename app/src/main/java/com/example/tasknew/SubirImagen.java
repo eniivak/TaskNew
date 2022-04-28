@@ -40,6 +40,7 @@ import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.m
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -89,7 +90,6 @@ public class SubirImagen extends Activity {
         Bundle extras= getIntent().getExtras();
         tarea = extras.getString("tarea");
         usuario= extras.getString("usuario");
-        Log.i("desde subir imagen: ",usuario);
         img = findViewById(R.id.Imageprev);
 
         //COMPROBAR SI YA HAY UNA FOTO
@@ -122,12 +122,12 @@ public class SubirImagen extends Activity {
             @Override
             public void onClick(View view) {
                 String titulo= tarea;
-                String imagen= picturePath;
                 SubirImagenesPHP subirImagenesPHP= new SubirImagenesPHP(SubirImagen.this);
-                //Log.i("encoded",encode(imageBitmap));
                 subirImagenesPHP.execute(titulo,encode(imageBitmap));
                 lanzarNotificacion();
                 Log.i("id",result);
+
+
             }
         });
 
@@ -139,7 +139,6 @@ public class SubirImagen extends Activity {
                 Intent intent= new Intent(SubirImagen.this, TareaSettings.class);
                 intent.putExtra("tarea",tarea);
                 intent.putExtra("usuario",usuario);
-
                 startActivity(intent);
             }
         });
@@ -156,7 +155,7 @@ public class SubirImagen extends Activity {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
-        mStorageRef = FirebaseStorage.getInstance().getReference("tareas/"+tarea);
+        mStorageRef = FirebaseStorage.getInstance().getReference("imagenDeLaTarea/"+tarea);
         mStorageRef.putBytes(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -286,9 +285,6 @@ public class SubirImagen extends Activity {
 
 private void lanzarNotificacion(){
      class NotificacionPHP extends AsyncTask<String,Void,String> {
-        Context context;
-        String result;
-
 
         protected void onPreExecute() {
             super.onPreExecute();
@@ -332,7 +328,7 @@ private void lanzarNotificacion(){
                 out.close();
                 // Log.i("insert","urlconn: " + urlConnection);
                 int statusCode = urlConnection.getResponseCode();
-                //Log.i("insert ","statusCode: " + statusCode);
+                Log.i("insert ","statusCode: " + statusCode);
                 if (statusCode == 200)
                 {
                     BufferedInputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
@@ -344,6 +340,7 @@ private void lanzarNotificacion(){
                     }
                     inputStream.close();
                     Log.i("el resultado de subir notificacion",result);
+                    Log.i("mssg", result);
                 }
 
 

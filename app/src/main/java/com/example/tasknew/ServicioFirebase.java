@@ -7,6 +7,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -22,51 +23,35 @@ import com.google.firebase.messaging.RemoteMessage;
 
 public class ServicioFirebase extends FirebaseMessagingService {
 
-    private String token;
-
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
-    public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-       /* String title=remoteMessage.getNotification().getTitle();
-        String text= remoteMessage.getNotification().getBody();
-        final String CHANNEL_ID= "HEADS_UP_NOTIFICATION";
+    public void onMessageReceived( RemoteMessage remoteMessage) {
+        if (remoteMessage.getData().size() > 0) {
+            if (remoteMessage.getNotification() != null) {
+                final String CHANNEL_ID= "HEADS_UP_NOTIFICATION";
+                Log.i("fcm ", "recived");
+                //Toast.makeText(getApplicationContext(),"FCM message",Toast.LENGTH_SHORT).show();
+                NotificationManager elManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                NotificationCompat.Builder elBuilder = new NotificationCompat.Builder(this, CHANNEL_ID);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    NotificationChannel elCanal = new NotificationChannel(CHANNEL_ID, "mssg",
+                            NotificationManager.IMPORTANCE_HIGH);
+                    elManager.createNotificationChannel(elCanal);
+                    elCanal.setDescription("Firebase messages");
+                    elCanal.enableLights(true);
+                    elCanal.setLightColor(Color.RED);
+                    elCanal.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+                    elCanal.enableVibration(true);
+                }
+                elBuilder.setSmallIcon(android.R.drawable.stat_sys_warning)
+                        .setContentTitle("Has subido una foto nueva al servidor!")
+                        .setContentText("Foto de la tarea: "+remoteMessage.getNotification().getBody().toString())
+                        .setSubText(remoteMessage.getNotification().getBody())
+                        .setVibrate(new long[]{0, 1000, 500, 1000})
+                        .setAutoCancel(true);
+                elManager.notify(1, elBuilder.build());
 
-        NotificationChannel channel= new NotificationChannel(
-                CHANNEL_ID,
-                "Heads Up Notification",
-                NotificationManager.IMPORTANCE_HIGH
-        );
-        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-        Notification.Builder notification= new Notification.Builder(this,CHANNEL_ID)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setSmallIcon(R.drawable.ena)
-                .setAutoCancel(true);
-        NotificationManagerCompat.from(this).notify(1,notification.build());
-        super.onMessageReceived(remoteMessage);*/
-        if (remoteMessage.getNotification() != null) {
-            Log.i("fcm ","recived");
-            //Toast.makeText(getApplicationContext(),"FCM message",Toast.LENGTH_SHORT).show();
-            NotificationManager elManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-            NotificationCompat.Builder elBuilder = new NotificationCompat.Builder(this, "2");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                NotificationChannel elCanal = new NotificationChannel("2", "mssg",
-                        NotificationManager.IMPORTANCE_DEFAULT);
-                elManager.createNotificationChannel(elCanal);
-                elCanal.setDescription("Firebase messages");
-                elCanal.enableLights(true);
-                elCanal.setLightColor(Color.RED);
-                elCanal.setVibrationPattern(new long[]{0, 1000, 500, 1000});
-                elCanal.enableVibration(true);
             }
-            elBuilder.setSmallIcon(android.R.drawable.stat_sys_warning)
-                    .setContentTitle("Notificacion")
-                    .setContentText(remoteMessage.getNotification().getBody().toString())
-                    .setSubText(remoteMessage.getNotification().getBody())
-                    .setVibrate(new long[]{0, 1000, 500, 1000})
-                    .setAutoCancel(true);
-            elManager.notify(1, elBuilder.build());
-
         }
     }
 

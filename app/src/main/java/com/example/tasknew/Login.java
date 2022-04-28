@@ -45,7 +45,7 @@ public class Login extends AppCompatActivity {
             }
         });
         //SUBSCRIBIR USUARIO AL TOPIC
-        FirebaseMessaging.getInstance().subscribeToTopic("recordatoria")
+        FirebaseMessaging.getInstance().subscribeToTopic("subirimagen")
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
