@@ -136,7 +136,8 @@ public class TareaSettings extends AppCompatActivity {
                 Intent intent= new Intent(TareaSettings.this, MainActivity.class); //para que cuando borres la tarea directamente te lleve al panel de las tareas
                 intent.putExtra("usuario",tm.getUsuario());
                 startActivity(intent);
-
+                NotificacionesPHP nt= new NotificacionesPHP();
+                nt.execute("Has borrado la tarea: ",tarea);
 
                /* NotificationUtils mNotificationUtils = new NotificationUtils(TareaSettings.this);
                 Notification.Builder nb = mNotificationUtils.

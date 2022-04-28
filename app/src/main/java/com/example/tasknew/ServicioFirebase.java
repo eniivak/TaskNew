@@ -44,34 +44,15 @@ public class ServicioFirebase extends FirebaseMessagingService {
                     elCanal.enableVibration(true);
                 }
                 elBuilder.setSmallIcon(android.R.drawable.stat_sys_warning)
-                        .setContentTitle("Has subido una foto nueva al servidor!")
-                        .setContentText("Foto de la tarea: "+remoteMessage.getNotification().getBody().toString())
+                        .setContentTitle(remoteMessage.getNotification().getTitle())
+                        .setContentText(remoteMessage.getNotification().getBody().toString())
                         .setSubText(remoteMessage.getNotification().getBody())
                         .setVibrate(new long[]{0, 1000, 500, 1000})
                         .setAutoCancel(true);
                 elManager.notify(1, elBuilder.build());
 
+
             }
         }
     }
-
-
-   /* public String generarToken(){
-        token= FirebaseInstanceId.getInstance().getToken();
-        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>(){
-            @Override
-            public void onComplete(@NonNull Task<InstanceIdResult> task){
-
-                if (task.isSuccessful()){
-                    token = task.getResult().getToken();
-                    Log.i("Token", "ondo "+token);
-                }
-                else{
-                    Log.i("Token", "error");
-                }
-
-            }
-        });
-        return  token;
-    }*/
 }
