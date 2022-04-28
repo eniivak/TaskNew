@@ -48,6 +48,10 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -66,14 +70,15 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class TareaSettings extends AppCompatActivity {
 
     String tarea;
     String usuario;
-    private StorageReference mStorageRef;
-    private DatabaseReference mDatabaseRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //INICIALIZAR
@@ -85,7 +90,7 @@ public class TareaSettings extends AppCompatActivity {
         usuario=extras.getString("usuario");
         TareaModel tm= new TareaModel(tarea,usuario);
 
-        Log.i("ha entrado" , " en la clase TareaSettings");
+        Log.i("ha entrado" , " en la clase TareaSettings"+ "con el usuario"+usuario);
         //Log.i("el nombre de la tarea", extras.getString("tarea"));
 
 
@@ -129,15 +134,16 @@ public class TareaSettings extends AppCompatActivity {
                 TareaModel tm= new TareaModel(extras.getString("tarea"), extras.getString("usuario"));
                 gestorDB.borrarTarea(tm);
                 Intent intent= new Intent(TareaSettings.this, MainActivity.class); //para que cuando borres la tarea directamente te lleve al panel de las tareas
-                intent.putExtra("usuario",usuario);
+                intent.putExtra("usuario",tm.getUsuario());
                 startActivity(intent);
 
 
-                NotificationUtils mNotificationUtils = new NotificationUtils(TareaSettings.this);
+               /* NotificationUtils mNotificationUtils = new NotificationUtils(TareaSettings.this);
                 Notification.Builder nb = mNotificationUtils.
                         getAndroidChannelNotification("Has borrado la tarea ", tarea);
 
-                mNotificationUtils.getManager().notify(101, nb.build());
+                mNotificationUtils.getManager().notify(101, nb.build());*/
+
             }
         });
 
@@ -162,7 +168,7 @@ public class TareaSettings extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent= new Intent(TareaSettings.this, MainActivity.class);
-                intent.putExtra("usuario",usuario);
+                Log.i("el extra dessde la tareasettings",usuario);
                 intent.putExtra("usuario",usuario);
                 startActivity(intent);
 
@@ -188,6 +194,8 @@ public class TareaSettings extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent= new Intent(TareaSettings.this, SubirImagen.class);
                 intent.putExtra("tarea",tarea);
+                intent.putExtra("usuario",usuario);
+                Log.i("desde tareasettings: ",usuario);
                 startActivity(intent);
 
             }
@@ -212,6 +220,9 @@ public class TareaSettings extends AppCompatActivity {
 
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
+
+
+
 
 
 }

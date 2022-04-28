@@ -77,9 +77,9 @@ public class SubirImagenesPHP extends AsyncTask<String,Bitmap,String> {
             urlConnection.setRequestMethod("POST");
             urlConnection.setDoOutput(true);
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            Log.i("la imagen",imagen);
+            //Log.i("la imagen",imagen);
             String parametros = "&titulo="+titulo+"&img="+imagen;
-            Log.i("la imagen", imagen);
+           // Log.i("la imagen", imagen);
             PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
             out.print(parametros);
             out.close();

@@ -13,9 +13,17 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     List<TareaModel> initItemList;
     AdapterListView listViewDataAdapter;
     ListView listViewWithCheckbox;
+    String usuario;
 
     @SuppressLint("LongLogTag")
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +46,12 @@ public class MainActivity extends AppCompatActivity {
         miDB gestorDB = new miDB(MainActivity.this);
         Bundle extras = getIntent().getExtras();
         listViewWithCheckbox = (ListView) findViewById(R.id.listview);
-
+        Log.i("en la clase main, los extras:",extras.getString("usuario"));
+        usuario= extras.getString("usuario");
         // Initiate listview data.
-        Log.i("desde la clase main el nombre del usuario",extras.getString("usuario"));
+        Log.i("desde la clase main el nombre del usuario",usuario);
 
-        initItemList = this.display(gestorDB, extras.getString("usuario"));
+        initItemList = this.display(gestorDB, usuario);
         Log.i("ha hecho bien el display", initItemList.toString());
         // Create a custom list view adapter with checkbox control.
         listViewDataAdapter = new AdapterListView(getApplicationContext(), initItemList);
@@ -117,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     if (dto.isChecked()) {
                         Log.i("la tarea de la que conseguimos los settings", initItemList.get(i).getNombre());
                         intent.putExtra("tarea", initItemList.get(i).getNombre()); // para conseguir el nombre del usuario ingresado en el login al cargar el MainActivity
-                        intent.putExtra("usuario", extras.getString("user"));
+                        intent.putExtra("usuario", usuario);
                         startActivity(intent);
 
                         dto.setChecked(false);
@@ -137,11 +147,14 @@ public class MainActivity extends AppCompatActivity {
         botonanadir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                initItemList = addItemToList(v, gestorDB, extras.getString("user"), initItemList);
+                initItemList = addItemToList(v, gestorDB, extras.getString("usuario"), initItemList);
                 Log.i("ha pulsado", " boton añadir");
 
             }
         });
+
+
+
 
 
     }

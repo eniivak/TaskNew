@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -12,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -22,9 +24,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.crashlytics.buildtools.reloc.com.google.common.base.Utf8;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.HttpResponse;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.NameValuePair;
@@ -34,11 +40,15 @@ import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.client.m
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.impl.client.DefaultHttpClient;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.message.BasicNameValuePair;
 import com.google.firebase.crashlytics.buildtools.reloc.org.apache.http.util.EntityUtils;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -51,6 +61,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -64,18 +75,21 @@ import javax.net.ssl.HttpsURLConnection;
 public class SubirImagen extends Activity {
 
     Button camarabot, btnup;
-    String picturePath;
+    String picturePath,tarea,usuario;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     ImageView img;
-    String tarea;
     private String result="" ;
     Bitmap imageBitmap;
+    private StorageReference mStorageRef;
+    private FirebaseStorage mFireStorage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.subir_imagenes);
         Bundle extras= getIntent().getExtras();
         tarea = extras.getString("tarea");
+        usuario= extras.getString("usuario");
+        Log.i("desde subir imagen: ",usuario);
         img = findViewById(R.id.Imageprev);
 
         //COMPROBAR SI YA HAY UNA FOTO
@@ -104,14 +118,16 @@ public class SubirImagen extends Activity {
         //SUBIR FOTOS AL SERVIDOR
         btnup = (Button) findViewById(R.id.up);
         btnup.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             @Override
             public void onClick(View view) {
                 String titulo= tarea;
                 String imagen= picturePath;
                 SubirImagenesPHP subirImagenesPHP= new SubirImagenesPHP(SubirImagen.this);
-                Log.i("encoded",encode(imageBitmap));
+                //Log.i("encoded",encode(imageBitmap));
                 subirImagenesPHP.execute(titulo,encode(imageBitmap));
-
+                lanzarNotificacion();
+                Log.i("id",result);
             }
         });
 
@@ -122,6 +138,8 @@ public class SubirImagen extends Activity {
             public void onClick(View view) {
                 Intent intent= new Intent(SubirImagen.this, TareaSettings.class);
                 intent.putExtra("tarea",tarea);
+                intent.putExtra("usuario",usuario);
+
                 startActivity(intent);
             }
         });
@@ -134,14 +152,33 @@ public class SubirImagen extends Activity {
         String encodedImage = Base64.encodeToString(b , Base64.URL_SAFE);
         return encodedImage;
     }
+    public void uploadImage(Bitmap bm){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+        mStorageRef = FirebaseStorage.getInstance().getReference("tareas/"+tarea);
+        mStorageRef.putBytes(data)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK ) {
             Bundle extras = data.getExtras();
             imageBitmap = (Bitmap) extras.get("data");
             img.setImageBitmap(imageBitmap);
+
 
             String imageFileName =tarea;
             imageFileName.concat(imageFileName);
@@ -155,6 +192,8 @@ public class SubirImagen extends Activity {
                 );
                 picturePath = image.getName();
                 Log.i("imagen nueva",picturePath);
+                //Uri uri=Uri.fromFile(new File(picturePath));
+                uploadImage(imageBitmap);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -233,8 +272,8 @@ public class SubirImagen extends Activity {
                     imageBitmap= BitmapFactory.decodeByteArray(bytes,0,bytes.length);
                     Log.i("bitmap", String.valueOf(imageBitmap));
                     if(imageBitmap==null){
-                        Uri newUri = Uri.fromFile(new File(result));
-                        imageBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(newUri));
+                        Uri uri = Uri.fromFile(new File(result));
+                        imageBitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri));
                     }
                     Log.i("bitmap", String.valueOf(imageBitmap));
                 }
@@ -245,5 +284,80 @@ public class SubirImagen extends Activity {
         conseguirImagenPHP.execute(tarea);
     }
 
+private void lanzarNotificacion(){
+     class NotificacionPHP extends AsyncTask<String,Void,String> {
+        Context context;
+        String result;
+
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected String doInBackground(String... strings) {
+            result="";
+            String titulo= strings[0];
+            String mensaje= strings[1];
+
+
+            result= subirNotificacion(titulo,mensaje);
+
+            return result;
+        }
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+        }
+
+
+
+        private String subirNotificacion(String titulo, String mensaje){
+            String link="http://ec2-52-56-170-196.eu-west-2.compute.amazonaws.com/everhorst001/WEB/notificacion.php";
+            HttpURLConnection urlConnection = null;
+            try
+            {
+                URL destino = new URL(link);
+                urlConnection = (HttpURLConnection) destino.openConnection();
+                urlConnection.setConnectTimeout(5000);
+                urlConnection.setReadTimeout(5000);
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setDoOutput(true);
+                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                Log.i("el mensaje",mensaje);
+                String parametros = "&titulo="+titulo+"&men="+mensaje;
+                Log.i("el  titulo", titulo);
+                PrintWriter out = new PrintWriter(urlConnection.getOutputStream());
+                out.print(parametros);
+                out.close();
+                // Log.i("insert","urlconn: " + urlConnection);
+                int statusCode = urlConnection.getResponseCode();
+                //Log.i("insert ","statusCode: " + statusCode);
+                if (statusCode == 200)
+                {
+                    BufferedInputStream inputStream = new BufferedInputStream(urlConnection.getInputStream());
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                    String line="";
+                    while ((line = bufferedReader.readLine()) != null) {
+                        result += line;
+
+                    }
+                    inputStream.close();
+                    Log.i("el resultado de subir notificacion",result);
+                }
+
+
+            }
+            catch (MalformedURLException e) {e.printStackTrace();}
+            catch (IOException e) {e.printStackTrace();}
+
+            return result;
+        }
+
+    }
+    NotificacionPHP notificacionPHP= new NotificacionPHP();
+    notificacionPHP.execute("has borrado la tarea: ",tarea);
+
+    }
 
 }
